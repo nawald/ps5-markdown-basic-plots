@@ -25,3 +25,7 @@ potentially your boss).
 •Do not make code lines too long. 80-100 characters is a good choice. Your grader may not
 be able to follow all the code if the line is too long–most of us are using small laptop screens!
 And again–you want to keep your graders happy!)
+
+1 Load and check data (5pt)
+You first task is to do a very simple data check:
+1. (1pt) For solving the problems, and answering the questions, create a new rmarkdown document with an appropriate title. See https://faculty.washington.edu/otoomet/info201-book/r-markdown.html/r-markdown-rstudio-creating.
