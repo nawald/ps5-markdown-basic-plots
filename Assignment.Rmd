@@ -46,6 +46,10 @@ plot(pressure)
 ##*pm2.5_35**: PM2.5 pollution, population exposed to levels exceeding WHO Interim Target-1 value 36ug/m3 (
 ##*battleDeaths**: Battle-related deaths (number of people)
 
+library(tidyverse)
+library(dplyr)
+library(ggplot2)
+library(stringr)
 
 1 Load and check data (5pt)
 You first task is to do a very simple data check:
@@ -53,9 +57,13 @@ You first task is to do a very simple data check:
 r-markdown.htmlr-markdown-rstudio-creating.
 
 2. (2pt) Load data. How many rows/columns do we have?
+gapminder <- read_delim('/Users/nawald/Desktop/gapminder.csv.bz2')
+gapminder
+
 
 3. (2pt) Print a small sample of data. Does it look OK?
-
+head(gapminder)
+##It looks good.
 
 2 Descriptive statistics (15pt)
 1. (3pt) How many countries are there in the dataset? Analyze all three: iso3, iso2 and name.
