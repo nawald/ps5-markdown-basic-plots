@@ -17,10 +17,9 @@ You can also embed plots, for example:
 plot(pressure)
 ```
 ## Gapminder data
-## We use gapminder dataset, downloaded from https://www.gapminder.org/data/, however, the
-## data structure there is quire complex, please use the dataset provided on canvas (in files/data).
-## The variables are:
-##*name**: country name
+##We use gapminder dataset, downloaded from https://www.gapminder.org/data/, however, the data structure there is quire complex, please use the dataset provided on canvas (in files/data).
+##The variables are:
+##**name**: country name
 ##*iso3*: 3-letter country code
 ##*iso2*: 2-letter country code
 ##*region**: broad geographic region
