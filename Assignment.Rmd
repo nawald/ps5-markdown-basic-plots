@@ -16,6 +16,7 @@ You can also embed plots, for example:
 ```{r pressure, echo=FALSE}
 plot(pressure)
 ```
+
 ## Gapminder data
 We use gapminder dataset, downloaded from https://www.gapminder.org/data/, however, the data structure there is quire complex, please use the dataset provided on canvas (in files/data).
 The variables are:
@@ -45,26 +46,35 @@ _co2_PC_: CO2 emissions (metric tons per capita)
 _*'pm2.5_35'*_: PM2.5 pollution, population exposed to levels exceeding WHO Interim Target-1 value 36ug/m3 (
 _battleDeaths_: Battle-related deaths (number of people)
 
+```{r}
 library(tidyverse)
 library(dplyr)
 library(ggplot2)
 library(stringr)
+```
 
-1 Load and check data (5pt)
+## 1 Load and check data (5pt)
 You first task is to do a very simple data check:
 1. (1pt) For solving the problems, and answering the questions, create a new rmarkdown document with an appropriate title. See https://faculty.washington.edu/otoomet/info201-book/
 r-markdown.htmlr-markdown-rstudio-creating.
 
 2. (2pt) Load data. How many rows/columns do we have?
+```{r}
 gapminder <- read_delim('/Users/nawald/Desktop/gapminder.csv.bz2')
-gapminder
-
+```
+We have this amount of rows/columns in the data:
+```{r}
+nrow(gapminder)
+ncol(gapminder)
+```
 
 3. (2pt) Print a small sample of data. Does it look OK?
+```{r}
 head(gapminder)
-* It looks good.
+```
+The data looks OK.
 
-2 Descriptive statistics (15pt)
+## 2 Descriptive statistics (15pt)
 1. (3pt) How many countries are there in the dataset? Analyze all three: iso3, iso2 and name.
 2. If you did this correctly, you saw that there are more names than iso-2 codes, and there are
   ##even more iso3 -codes. What is going on? Can you find it out?
@@ -76,7 +86,7 @@ Hint: two of these entitites are CHANISL and NLD CURACAO.
 
 3. (2pt) What is the minimum and maximum year in these data?
 
-3 CO2 emissions (30pt)
+## 3 CO2 emissions (30pt)
 Next, let’s analyze CO2 emissions.
 
 1. (2pt) How many missing co2 emissions are there for each year? Analyze both missing CO2
@@ -95,7 +105,7 @@ Hint: Americas 2016 should be 4.80.
 6. Which countries are the three largest, and three smallest CO2 emitters (in terms of CO2 per capita) in 2019 for each continent? (Assume region is continent).
 
 
-4 GDP per capita (50pt)
+## 4 GDP per capita (50pt)
 Let’s look at GDP per capita (GDP_PC ).
 
 1. (8pt) Make a scatterplot of GDP per capita versus life expectancy by country, using data for 1960. Make the point size dependent on the country size, and color those according to the continent. Feel free to adjust the plot in other ways to make it better.
@@ -123,5 +133,5 @@ histograms on the same graph, see how well you can do it!
   
 8. (6pt) If you did this correctly, then you noticed that US ranking has been falling quite a bit. But we also have more countries in 2019–what about the relative rank divided by the corresponding number of countries that have LE data in the corresponding year? Hint: 0.0904 for 1960.
 
-Finally tell us how many hours did you spend on this PS.
+## Finally tell us how many hours did you spend on this PS.
 
