@@ -1,5 +1,5 @@
 ---
-title: "ps5 Assignment"
+title: "PS5 Assignment"
 author: "Nawal Dhabar"
 date: "2023-02-16"
 output: html_document
@@ -46,7 +46,7 @@ _co2_PC_: CO2 emissions (metric tons per capita)
 _*'pm2.5_35'*_: PM2.5 pollution, population exposed to levels exceeding WHO Interim Target-1 value 36ug/m3 (
 _battleDeaths_: Battle-related deaths (number of people)
 
-```{r}
+```{r, echo=FALSE}
 library(tidyverse)
 library(dplyr)
 library(ggplot2)
@@ -59,14 +59,16 @@ You first task is to do a very simple data check:
 r-markdown.htmlr-markdown-rstudio-creating.
 
 2. (2pt) Load data. How many rows/columns do we have?
-```{r}
+```{r, echo=FALSE}
 gapminder <- read_delim('/Users/nawald/Desktop/gapminder.csv.bz2')
 ```
-We have this amount of rows/columns in the data:
+
 ```{r}
-nrow(gapminder)
-ncol(gapminder)
+row <- nrow(gapminder)
+column <- ncol(gapminder)
 ```
+We have `r row` rows and `r column` columns in the data
+
 
 3. (2pt) Print a small sample of data. Does it look OK?
 ```{r}
@@ -76,15 +78,47 @@ The data looks OK.
 
 ## 2 Descriptive statistics (15pt)
 1. (3pt) How many countries are there in the dataset? Analyze all three: iso3, iso2 and name.
-2. If you did this correctly, you saw that there are more names than iso-2 codes, and there are
-  ##even more iso3 -codes. What is going on? Can you find it out?
-(a) (5pt) Find how many names are there for each iso-2 code. Are there any iso-2 codes that correspond to more than one name? What are these countries?
 
-(b) (5pt) Now repeat the same for name and iso3-code. Are there country names that have
+```{r}
+countries_iso3 <- gapminder %>% 
+  select(iso3) %>% 
+  filter(!is.na(iso3)) %>% 
+  n_distinct()
+
+countries_iso2 <- gapminder %>% 
+  select(iso2) %>% 
+  filter(!is.na(iso2)) %>% 
+  n_distinct() 
+
+countries_name <- gapminder %>% 
+  select(name) %>% 
+  filter(!is.na(name)) %>% 
+  n_distinct() 
+```
+There are `r countries_iso3` countries according to the iso3 variable, `r countries_iso2` countries according to my calculations of the iso2 variable and `r countries_name` countries according to the name variable
+
+
+
+2. If you did this correctly, you saw that there are more names than iso-2 codes, and there are even more iso3 -codes. What is going on? Can you find it out?
+  (a) (5pt) Find how many names are there for each iso-2 code. Are there any iso-2 codes that correspond to more than one name? What are these countries?
+
+
+  (b) (5pt) Now repeat the same for name and iso3-code. Are there country names that have
 more than one iso3-code? What are these countries?
 Hint: two of these entitites are CHANISL and NLD CURACAO.
 
 3. (2pt) What is the minimum and maximum year in these data?
+
+```{r}
+numbers <- gapminder %>% 
+  filter(!is.na(time)) 
+  
+mini <- min(numbers$time)
+maxi <- max(numbers$time)
+
+```
+The maximum year in the data is `r maxi ` and the minimum year is `r mini`
+
 
 ## 3 CO2 emissions (30pt)
 Next, let’s analyze CO2 emissions.

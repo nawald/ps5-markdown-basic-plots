@@ -36,26 +36,63 @@
   ##ment with an appropriate title. See https://faculty.washington.edu/otoomet/info201-book/
   ##r-markdown.html#r-markdown-rstudio-creating.
 ##2. (2pt) Load data. How many rows/columns do we have?
+
 ##3. (2pt) Print a small sample of data. Does it look OK?
 
 
 ##2 Descriptive statistics (15pt)
 ##1. (3pt) How many countries are there in the dataset? Analyze all three: iso3, iso2 and name.
+
+#iso3 (3 letter country code) = 253 distinct values
+gapminder %>% 
+  select(iso3) %>% 
+  filter(!is.na(iso3)) %>% 
+  n_distinct()
+  
+#iso2 (2 letter country code) = 248 distinct values
+gapminder %>% 
+  select(iso2) %>% 
+  filter(!is.na(iso2)) %>% 
+  n_distinct()  
+
+#name = 249 distinct values
+gapminder %>% 
+  select(name) %>% 
+  filter(!is.na(name)) %>% 
+  n_distinct() 
+  
+
 ##2. If you did this correctly, you saw that there are more names than iso-2 codes, and there are
   ##even more iso3 -codes. What is going on? Can you find it out?
 ##(a) (5pt) Find how many names are there for each iso-2 code. Are there any iso-2 codes that
     ##correspond to more than one name? What are these countries?
+gapminder %>% 
+  select(iso2, name) %>% 
+ 
+
+  
+  
+  
+  
 ##(b) (5pt) Now repeat the same for name and iso3-code. Are there country names that have
   ##more than one iso3-code? What are these countries?
   ##Hint: two of these entitites are CHANISL and NLD CURACAO.
 ##3. (2pt) What is the minimum and maximum year in these data?
+numbers <- gapminder %>% 
+  filter(!is.na(time)) 
+  
+mini <- min(numbers$time)
+mini
 
-
-
+maxi <- max(numbers$time)
+maxi
+  
 ##3 CO2 emissions (30pt)
 ##Next, let’s analyze CO2 emissions.
 ##1. (2pt) How many missing co2 emissions are there for each year? Analyze both missing CO2
   ##and co2_PC. Which years have most missing data?
+
+
 ##2. (5pt) Make a plot of total CO2 emissions over time for the U.S, China, and India. Add a few
   ##more countries of your choice. Explain what do you see.
 ##3. (5pt) Now let’s analyze the CO2 emissions per capita (co2_PC ). Make a similar plot of the
