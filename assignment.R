@@ -89,9 +89,6 @@ another <- gapminder %>%
   filter(is.na(name)) %>% 
   distinct()
 
-
-
-
 ##3. (2pt) What is the minimum and maximum year in these data?
 numbers <- gapminder %>% 
   filter(!is.na(time)) 
@@ -105,7 +102,18 @@ maxi
 ##3 CO2 emissions (30pt)
 ##Next, let’s analyze CO2 emissions.
 ##1. (2pt) How many missing co2 emissions are there for each year? Analyze both missing CO2
-  ##and co2_PC. Which years have most missing data?
+  ## and co2_PC. Which years have most missing data?
+
+#co2
+dummy <- gapminder %>% 
+  filter(is.na(co2)) %>% 
+  filter(!is.na(time)) %>% 
+  group_by(time) %>% 
+  
+
+
+
+#co2_PC
 
 
 ##2. (5pt) Make a plot of total CO2 emissions over time for the U.S, China, and India. Add a few
@@ -121,6 +129,8 @@ maxi
   ##across continents in 1960 and 2016.
 ##6. Which countries are the three largest, and three smallest CO2 emitters (in terms of CO2 per
   ##capita) in 2019 for each continent? (Assume region is continent).
+
+
 ##4 GDP per capita (50pt)
 
 ##Let’s look at GDP per capita (GDP_PC ).
