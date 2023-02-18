@@ -102,10 +102,37 @@ There are `r countries_iso3` countries according to the iso3 variable, `r countr
 2. If you did this correctly, you saw that there are more names than iso-2 codes, and there are even more iso3 -codes. What is going on? Can you find it out?
   (a) (5pt) Find how many names are there for each iso-2 code. Are there any iso-2 codes that correspond to more than one name? What are these countries?
 
+```{r, echo=FALSE} 
+find_out <- gapminder %>% 
+  group_by(iso2) %>% 
+  summarize(total = n_distinct(name)) %>% 
+  arrange(-total)
 
-  (b) (5pt) Now repeat the same for name and iso3-code. Are there country names that have
-more than one iso3-code? What are these countries?
+which <- gapminder %>% 
+  select(iso2, name) %>% 
+  filter(is.na(iso2)) %>% 
+  distinct()
+
+```
+Yes, there is an iso-2 code that corresponds to more than one name, this code is called `r which [1, 1]`. It corresponds to two country names. One of these country names is   `r which[2, 2]` and the other is called NA, most likely because it does not have country name stored.
+
+
+  (b) (5pt) Now repeat the same for name and iso3-code. Are there country names that have more than one iso3-code? What are these countries?
 Hint: two of these entitites are CHANISL and NLD CURACAO.
+
+``` {r}
+thing <- gapminder %>% 
+  group_by(name) %>% 
+  summarize(total = n_distinct(iso3)) %>% 
+  arrange(-total)
+
+another <- gapminder %>% 
+  select(iso3, name) %>% 
+  filter(is.na(name)) %>% 
+  distinct()
+
+```
+Yes, there are country names that have more than one iso3-code. The country name is stored as 'NA' in the data. It has four iso3 codes assigned to it, these codes are `r another[1,1]`, `r another[2,1]`, `r another[3, 1]`, and `r another[4,1]`. I believe these codes were not assigned names, which is why their corresponding values in the name column is 'NA'
 
 3. (2pt) What is the minimum and maximum year in these data?
 
