@@ -273,6 +273,39 @@ average <- gapminder %>%
 
 6. Which countries are the three largest, and three smallest CO2 emitters (in terms of CO2 per capita) in 2019 for each continent? (Assume region is continent).
 
+``` {r, echo=FALSE, message=FALSE}
+three <-  gapminder %>% 
+  select(name, region, time, co2_PC) %>% 
+  filter(!is.na(co2_PC), !is.na(name), !is.na(region), !is.na(time)) %>% 
+  filter(time == '2016') %>% 
+  group_by(region, name, time) %>% 
+  summarize(
+    total = sum(co2_PC)
+  ) %>% 
+    arrange(-total)
+    
+  three_highest <- three %>% 
+    group_by(region) %>% 
+    filter(rank(desc(total)) < 4)
+  
+  three_lowest <- three %>% 
+    group_by(region) %>% 
+    filter(rank(desc(-total)) < 4)
+
+```
+
+Since 2019 doesn't have enough data, I'll use 2016 because it's the closest year. I found that the three largest co2 emitters in 2016 for the Americas were `r three_highest[2, 2]`, `r three_highest[8, 2]`, and `r three_highest[10, 2]`. The three smallest were `r three_lowest [10, 2]`, `r three_lowest[5, 2]`, and `r three_lowest[4, 2]`. 
+
+The three largest in Asia were `r three_highest[1, 2]`, `r three_highest[3, 2]`, and 
+`r three_highest[4,2]`. The three smallest were `r three_lowest[12, 2]`, `r  three_lowest[9,2]`, and `r  three_lowest[8,2]`.
+
+For Europe, the three largest were `r three_highest[6, 2]`, `r three_highest[9, 2]`, and `r three_highest[11, 2]`. The three lowest were `r three_lowest[3, 2]`, 
+`r three_lowest[2, 2]`, and `r three_lowest[1, 2]`.
+
+In Oceania, the countries with the largest co2 emissions were `r three_highest[5, 2]`, 
+`r three_highest[7, 2]`, and `r three_highest[12, 2]`. The three lowest emitters in this region are `r three_lowest[11, 2]`, `r three_lowest[7, 2]`, and `r three_lowest[6, 2]`.
+
+Finally, in Africa, the countries with the largest emissions are `r three_highest[13, 2]`, `r three_highest[14, 2]`, and `r three_highest[15, 2]`. The lowest ranking ones are `r three_lowest[15, 2]`,  `r three_lowest[14, 2]`, and  `r three_lowest[13, 2]`.
 
 ## 4 GDP per capita (50pt)
 Let’s look at GDP per capita (GDP_PC ).

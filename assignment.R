@@ -196,14 +196,44 @@ missing_co2_PC <- gapminder %>%
     
 ##6. Which countries are the three largest, and three smallest CO2 emitters (in terms of CO2 per
   ##capita) in 2019 for each continent? (Assume region is continent).
- gapminder %>% 
+#Since 2019 doesn't have enough data, Ill use 2016
+    
+##Americas: Top 3 = Trinidad & Tobago, United States of America, Canada
+            #Bottom 3 = Honduras, Nicaragua, Haiti
+    
+##Asia: Top 3 = Qatar, Kuwait, Bahrain
+        #Bottom 3 = Yemen, Nepal, Afghanistan
+    
+##Europe: Top 3 = Gibraltar, Luxembourg, Faroe Islands
+      #Bottom 3 = Moldova, Republic Of, Albania, Liechtenstein
+    
+#Africa: Top 3 = South Africa, Libya, Seychelles
+    #Bottom 3 = Congo, Democratic Republic Of, Somalia, Burundi
+    
+#Oceania: Top 3 = New Caledonia, Australia, Palau
+    #Bottom 3 = Kiribati, Vanuatu, Solomon Islands
+    
+    three <-  gapminder %>% 
   select(name, region, time, co2_PC) %>% 
   filter(!is.na(co2_PC), !is.na(name), !is.na(region), !is.na(time)) %>% 
-  filter(time == '2019') %>% 
+  filter(time == '2016') %>% 
   group_by(region, name, time) %>% 
   summarize(
     total = sum(co2_PC)
-  ) 
+  ) %>% 
+    arrange(-total)
+    
+  three_highest <- three %>% 
+    group_by(region) %>% 
+    filter(rank(desc(total)) < 4)
+  
+  three_lowest <- three %>% 
+    group_by(region) %>% 
+    filter(rank(desc(-total)) < 4)
+    
+
+    
+  
 
 ##4 GDP per capita (50pt)
 
