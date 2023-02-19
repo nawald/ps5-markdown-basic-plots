@@ -168,7 +168,8 @@ and co2_PC. Which years have most missing data?
   knitr::kable() 
   
 ```
-These are the missing co2 emissions for each year, using the co2 column to calculate: `r missing_co2`. The years with the most missing data here are 2019, 2018 and 2017. 
+These are the missing co2 emissions for each year, using the co2 column to calculate: `r missing_co2`
+The years with the most missing data here are 2019, 2018 and 2017. 
 
 
 ``` {r, echo=FALSE}
@@ -184,7 +185,8 @@ missing_co2_PC <- gapminder %>%
   knitr::kable()
 ```
 
-These are the missing co2 emissions for each year, using the co2 per capita column to calculate: `r missing_co2_PC`. Once again, the years with the most missing data are 2019, 2018 and 2017.
+These are the missing co2 emissions for each year, using the co2 per capita column to calculate: `r missing_co2_PC`
+Once again, the years with the most missing data are 2019, 2018 and 2017.
 
 
 
@@ -192,9 +194,9 @@ These are the missing co2 emissions for each year, using the co2 per capita colu
 
 
 
-```{r, echo=FALSE}
+```{r, echo=FALSE, message=FALSE}
 emissions <- gapminder %>% 
-      group_by(name) %>% 
+      group_by(name, time) %>% 
       filter(!is.na(co2)) %>% 
       filter(!is.na(time)) %>% 
       filter(name == 'United States of America'| name == 'China' | name == 'India'
@@ -202,23 +204,72 @@ emissions <- gapminder %>%
       summarize(
         total_co2 = sum(co2)
       )
-
-ggplot(emissions, aes(name, total_co2)) +
-      geom_col(fill = 'mediumpurple1', 
-              linewidth=2)
+    
+    ggplot(emissions, aes(x = time, y = total_co2, color = name)) +
+      geom_line() +
+      ggtitle('Total co2 emissions over time')
 
 ```
 
 
-I see that Afghanistan and Aruba have a significantly less amount of total co2 emissions than the U.S., China and India, to the point where you can barely see their bars on the chart. I think this is because of the gap in development between these two groups of countries is big, so the less developed ones produce less co2 emissions. They are also less populated than the countries with higher co2 emissions, so that also plays a part. 
+I see that Afghanistan and Aruba have a significantly less amount of total co2 emissions than the U.S., China and India, to the point where their lines are low on the chart. I think this is because of the gap in development between these two groups of countries is big, so the less developed ones produce less co2 emissions. They are also less populated than the countries with higher co2 emissions, so that also plays a part. 
 
 3. (5pt) Now let’s analyze the CO2 emissions per capita (co2_PC ). Make a similar plot of the same countries. What does this figure suggest?
+
+
+```{r, echo=FALSE, message=FALSE}
+capita <- gapminder %>% 
+      group_by(name, time) %>% 
+      filter(!is.na(co2_PC)) %>% 
+      filter(!is.na(time)) %>% 
+      filter(name == 'United States of America'| name == 'China' | name == 'India'
+             | name == 'Aruba' | name == 'Afghanistan') %>% 
+      
+      summarize(
+        total_emissions = sum(co2_PC)
+      )
+    
+    ggplot(capita, aes(x = time, y = total_emissions, color = name)) +
+      geom_line() +
+      ggtitle('Total co2 emissions per capita')
+
+```
+
+This figure is very different from the first one. Here, Aruba which was the one with the lowest total co2 emissions has trended higher than other countries. However, it also crashed down halfway during the period of time the data covers, and is now trending lower than countries like the U.S. Interestingly enough, Afghanistan which was also one of the lowest before is still the lowest now. I think this figure suggests that at one point, Aruba had more co2 per capita than the other countries, despite lower total co2 emissions. However, something happened and now it has decreased significantly while the others continue to grow.
+
 
 4. (6pt) Compute average CO2 emissions per capita across the continents (assume region is the same as continent). Comment what do you see.
 Note: just compute averages over countries and ignore the fact that countries are of different size.
 
 Hint: Americas 2016 should be 4.80.
+
+```{r, echo=FALSE, message=FALSE} 
+average <- gapminder %>% 
+      filter(!is.na(co2_PC),!is.na(region)) %>% 
+      group_by(region, time) %>% 
+      summarize(
+        total = mean(co2_PC)
+      )
+
+```
+
+I noticed that with a few exceptions, Americas have the highest average co2 emissions per capita, with it's entries in the top ten highest ranging from the years 1970 to 1985 and the values between 10 and 13 metric tons. Another interesting thing to me is that most of the ten highest averages take place between the 1970s and 1980s, despite the range of years for this data maxing out at 2019. It's weird that such high averages are clustered in the same period.
+
+
+
 5. (7pt) Make a barplot where you show the previous results–average CO2 emissions per capita across continents in 1960 and 2016.
+```{r, echo=FALSE}
+average <- gapminder %>% 
+      filter(!is.na(co2_PC),!is.na(region)) %>% 
+      filter(time == '1960'| time == '2016') %>% 
+      group_by(region, time) %>% 
+      mutate(avg_co2_PC = mean(co2_PC)) 
+    
+    ggplot(average, aes(region, avg_co2_PC, fill = factor(time))) +
+    geom_bar(stat = 'identity', position = 'dodge')
+
+```
+
 
 6. Which countries are the three largest, and three smallest CO2 emitters (in terms of CO2 per capita) in 2019 for each continent? (Assume region is continent).
 

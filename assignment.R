@@ -133,29 +133,76 @@ missing_co2_PC <- gapminder %>%
   filter(rank(desc(missing_co2_PC_values)) < 4) %>% 
   knitr::kable()
 
-missing_co2_PC %>% 
-  select(missing_co2_PC_values) %>% 
-  summarize(
-    count=n()
-  )
+
 
 ##2. (5pt) Make a plot of total CO2 emissions over time for the U.S, China, and India. Add a few
   ##more countries of your choice. Explain what do you see.
-  emissions <-
-  
+    emissions <- gapminder %>% 
+      group_by(name, time) %>% 
+      filter(!is.na(co2)) %>% 
+      filter(!is.na(time)) %>% 
+      filter(name == 'United States of America'| name == 'China' | name == 'India'
+             | name == 'Aruba' | name == 'Afghanistan') %>% 
+      summarize(
+        total_co2 = sum(co2)
+      )
+    
+    ggplot(emissions, aes(x = time, y = total_co2, color = name)) +
+      geom_line() +
+      ggtitle('Total co2 emissions over time')
+      
 
 ##3. (5pt) Now let’s analyze the CO2 emissions per capita (co2_PC ). Make a similar plot of the
   ##same countries. What does this figure suggest?
+    
+    
+    capita <- gapminder %>% 
+      group_by(name, time) %>% 
+      filter(!is.na(co2_PC)) %>% 
+      filter(!is.na(time)) %>% 
+      filter(name == 'United States of America'| name == 'China' | name == 'India'
+             | name == 'Aruba' | name == 'Afghanistan') %>% 
+      
+      summarize(
+        total_emissions = sum(co2_PC)
+      )
+    
+    ggplot(capita, aes(x = time, y = total_emissions, color = name)) +
+      geom_line() +
+      ggtitle('Total co2 emissions per capita')
+    
 ##4. (6pt) Compute average CO2 emissions per capita across the continents (assume region is the
   ##same as continent). Comment what do you see.
 ##Note: just compute averages over countries and ignore the fact that countries are of different
   ##size.
 ##Hint: Americas 2016 should be 4.80.
+    average <- gapminder %>% 
+      filter(!is.na(co2_PC),!is.na(region)) %>% 
+      group_by(region, time) %>% 
+      summarize(
+        total = mean(co2_PC)
+      )
+    
 ##5. (7pt) Make a barplot where you show the previous results–average CO2 emissions per capita
   ##across continents in 1960 and 2016.
+    average <- gapminder %>% 
+      filter(!is.na(co2_PC),!is.na(region)) %>% 
+      filter(time == '1960'| time == '2016') %>% 
+      group_by(region, time) %>% 
+      mutate(avg_co2_PC = mean(co2_PC)) 
+    
+    ggplot(average, aes(region, avg_co2_PC, fill = factor(time))) +
+    geom_bar(stat = 'identity', position = 'dodge')
+    
 ##6. Which countries are the three largest, and three smallest CO2 emitters (in terms of CO2 per
   ##capita) in 2019 for each continent? (Assume region is continent).
-
+three <- gapminder %>% 
+  select(name, region, time, co2_PC) %>% 
+  filter(!is.na(co2_PC)) %>% 
+  group_by(region, name, time) %>% 
+  summarize(
+    total = sum(co2_PC)
+  ) 
 
 ##4 GDP per capita (50pt)
 
