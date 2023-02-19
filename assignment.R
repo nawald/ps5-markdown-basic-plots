@@ -196,9 +196,10 @@ missing_co2_PC <- gapminder %>%
     
 ##6. Which countries are the three largest, and three smallest CO2 emitters (in terms of CO2 per
   ##capita) in 2019 for each continent? (Assume region is continent).
-three <- gapminder %>% 
+ gapminder %>% 
   select(name, region, time, co2_PC) %>% 
-  filter(!is.na(co2_PC)) %>% 
+  filter(!is.na(co2_PC), !is.na(name), !is.na(region), !is.na(time)) %>% 
+  filter(time == '2019') %>% 
   group_by(region, name, time) %>% 
   summarize(
     total = sum(co2_PC)
