@@ -35,6 +35,11 @@
 ##1. (1pt) For solving the problems, and answering the questions, create a new rmarkdown docu-
   ##ment with an appropriate title. See https://faculty.washington.edu/otoomet/info201-book/
   ##r-markdown.html#r-markdown-rstudio-creating.
+
+library(tidyverse)
+library(dplyr)
+library(ggplot2)
+library(stringr)
 ##2. (2pt) Load data. How many rows/columns do we have?
 
 ##3. (2pt) Print a small sample of data. Does it look OK?
@@ -105,19 +110,40 @@ maxi
   ## and co2_PC. Which years have most missing data?
 
 #co2
-dummy <- gapminder %>% 
+missing_co2 <- gapminder %>% 
   filter(is.na(co2)) %>% 
   filter(!is.na(time)) %>% 
   group_by(time) %>% 
-  
-
-
+  filter(time %in% (1960:2019)) %>% 
+  summarize(
+    missing_co2_values = n()
+  ) %>% 
+  filter(rank(desc(missing_co2_values)) < 4) %>% 
+  knitr::kable()
 
 #co2_PC
+missing_co2_PC <- gapminder %>% 
+  filter(is.na(co2_PC)) %>% 
+  filter(!is.na(time)) %>% 
+  group_by(time) %>% 
+  filter(time %in% (1960:2019)) %>% 
+  summarize(
+    missing_co2_PC_values = n()
+  ) %>% 
+  filter(rank(desc(missing_co2_PC_values)) < 4) %>% 
+  knitr::kable()
 
+missing_co2_PC %>% 
+  select(missing_co2_PC_values) %>% 
+  summarize(
+    count=n()
+  )
 
 ##2. (5pt) Make a plot of total CO2 emissions over time for the U.S, China, and India. Add a few
   ##more countries of your choice. Explain what do you see.
+  emissions <-
+  
+
 ##3. (5pt) Now let’s analyze the CO2 emissions per capita (co2_PC ). Make a similar plot of the
   ##same countries. What does this figure suggest?
 ##4. (6pt) Compute average CO2 emissions per capita across the continents (assume region is the

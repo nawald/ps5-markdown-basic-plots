@@ -46,7 +46,7 @@ _co2_PC_: CO2 emissions (metric tons per capita)
 _*'pm2.5_35'*_: PM2.5 pollution, population exposed to levels exceeding WHO Interim Target-1 value 36ug/m3 (
 _battleDeaths_: Battle-related deaths (number of people)
 
-```{r, echo=FALSE}
+```{r, echo=FALSE, message=FALSE}
 library(tidyverse)
 library(dplyr)
 library(ggplot2)
@@ -59,11 +59,11 @@ You first task is to do a very simple data check:
 r-markdown.htmlr-markdown-rstudio-creating.
 
 2. (2pt) Load data. How many rows/columns do we have?
-```{r, echo=FALSE}
+```{r, echo=FALSE, message=FALSE}
 gapminder <- read_delim('/Users/nawald/Desktop/gapminder.csv.bz2')
 ```
 
-```{r}
+```{r, echo=FALSE}
 row <- nrow(gapminder)
 column <- ncol(gapminder)
 ```
@@ -71,8 +71,10 @@ We have `r row` rows and `r column` columns in the data
 
 
 3. (2pt) Print a small sample of data. Does it look OK?
-```{r}
-head(gapminder)
+```{r, echo=FALSE}
+gapminder %>% 
+sample_n(3) %>% 
+  knitr::kable()
 ```
 The data looks OK.
 
@@ -153,7 +155,62 @@ Next, let’s analyze CO2 emissions.
 1. (2pt) How many missing co2 emissions are there for each year? Analyze both missing CO2
 and co2_PC. Which years have most missing data?
 
+```{r, echo=FALSE}
+ missing_co2 <- gapminder %>% 
+  filter(is.na(co2)) %>% 
+  filter(!is.na(time)) %>% 
+  group_by(time) %>% 
+  filter(time %in% (1960:2019)) %>% 
+  summarize(
+    missing_co2_values = n()
+  )  %>% 
+   filter(rank(desc(missing_co2_values)) < 4) %>% 
+  knitr::kable() 
+  
+```
+These are the missing co2 emissions for each year, using the co2 column to calculate: `r missing_co2`. The years with the most missing data here are 2019, 2018 and 2017. 
+
+
+``` {r, echo=FALSE}
+missing_co2_PC <- gapminder %>% 
+  filter(is.na(co2_PC)) %>% 
+  filter(!is.na(time)) %>% 
+  group_by(time) %>% 
+  filter(time %in% (1960:2019)) %>% 
+  summarize(
+    missing_co2_PC_values = n()
+  ) %>% 
+  filter(rank(desc(missing_co2_PC_values)) < 4) %>% 
+  knitr::kable()
+```
+
+These are the missing co2 emissions for each year, using the co2 per capita column to calculate: `r missing_co2_PC`. Once again, the years with the most missing data are 2019, 2018 and 2017.
+
+
+
 2. (5pt) Make a plot of total CO2 emissions over time for the U.S, China, and India. Add a few more countries of your choice. Explain what do you see.
+
+
+
+```{r, echo=FALSE}
+emissions <- gapminder %>% 
+      group_by(name) %>% 
+      filter(!is.na(co2)) %>% 
+      filter(!is.na(time)) %>% 
+      filter(name == 'United States of America'| name == 'China' | name == 'India'
+             | name == 'Aruba' | name == 'Afghanistan') %>% 
+      summarize(
+        total_co2 = sum(co2)
+      )
+
+ggplot(emissions, aes(name, total_co2)) +
+      geom_col(fill = 'mediumpurple1', 
+              linewidth=2)
+
+```
+
+
+I see that Afghanistan and Aruba have a significantly less amount of total co2 emissions than the U.S., China and India, to the point where you can barely see their bars on the chart. I think this is because of the gap in development between these two groups of countries is big, so the less developed ones produce less co2 emissions. They are also less populated than the countries with higher co2 emissions, so that also plays a part. 
 
 3. (5pt) Now let’s analyze the CO2 emissions per capita (co2_PC ). Make a similar plot of the same countries. What does this figure suggest?
 
