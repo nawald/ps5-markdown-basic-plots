@@ -266,7 +266,8 @@ average <- gapminder %>%
       mutate(avg_co2_PC = mean(co2_PC)) 
     
     ggplot(average, aes(region, avg_co2_PC, fill = factor(time))) +
-    geom_bar(stat = 'identity', position = 'dodge')
+    geom_bar(stat = 'identity', position = 'dodge') +
+      ggtitle('Average co2 emissions per capita across continents in 1960 and 2016')
 
 ```
 
@@ -313,18 +314,102 @@ Let’s look at GDP per capita (GDP_PC ).
 1. (8pt) Make a scatterplot of GDP per capita versus life expectancy by country, using data for 1960. Make the point size dependent on the country size, and color those according to the continent. Feel free to adjust the plot in other ways to make it better.
 Comment what do you see there.
 
+``` {r, message=FALSE}
+gdp <- gapminder %>% 
+    filter(!is.na(name), !is.na(region), !is.na(GDP_PC), !is.na(time), 
+           !is.na(lifeExpectancy), !is.na(totalPopulation)) %>% 
+    filter(time == '1960') %>% 
+    group_by(name, region, lifeExpectancy, GDP_PC, totalPopulation) %>% 
+    select(name, region, time, lifeExpectancy, GDP_PC, totalPopulation)
+  
+  ggplot(gdp,
+         aes(GDP_PC, lifeExpectancy, col=region)) +
+    geom_point(aes(size=totalPopulation)) +
+    labs( x = 'GDP per capita',
+          y = 'Life Expectancy') +
+    ggtitle('GDP per capita versus life expectancy by country in 1960')
+
+``` 
+
+I see that the continents with high GDP per capita also have high life expectancy, 
+like Americas and Europe. The continents like Africa and Oceania are at the bottom
+for both life expectancy and GDP per capita, and while Asia is mainly in the middle 
+for life expectancy, it is on the lower side for GDP per capita compared to Americas
+and Europe. This suggests a link between GDP per capita and life expectancy, that is
+the higher the GDP the higher a continent life expectancy because there is more financial and economic security.
+
+
+
 2. (4pt) Make a similar plot, but this time use 2019 data only.
+```{r, message=FALSE}
+gdp2 <- gapminder %>% 
+    filter(!is.na(name), !is.na(region), !is.na(GDP_PC), !is.na(time), 
+           !is.na(lifeExpectancy), !is.na(totalPopulation)) %>% 
+    filter(time == '2019') %>% 
+    group_by(name, region, lifeExpectancy, GDP_PC, totalPopulation) %>% 
+    select(name, region, time, lifeExpectancy, GDP_PC, totalPopulation)
+  
+  ggplot(gdp2,
+         aes(GDP_PC, lifeExpectancy, col=region)) +
+    geom_point(aes(size=totalPopulation)) +
+    labs( x = 'GDP per capita',
+          y = 'Life Expectancy') +
+    ggtitle('GDP per capita versus life expectancy by country in 2019')
+```
 
 3. (6pt) Compare these two plots and comment what do you see. How has world developed
 through the last 60 years?
 
+The first thing I notice is that Asia has moved up by a lot in both GDP per capita and especially life expectancy. Oceania has also moved higher in life expectancy over the last 60 years. However, Africa is still the lowest in both categories despite the time gap. I think these differences point to significant developments in Asia and to a lesser extent, Oceania and Europe. However, Africa has been left behind and has not developed as much like the other continents. 
+
 4. (6pt) Compute the average life expectancy for each continent in 1960 and 2019. Do the results fit with what do you see on the figures?
 Note: here as average I mean just average over countries, ignore the fact that countries are of different size.
+```{r, message=FALSE}
+average_le_2019 <- gapminder %>% 
+    filter(!is.na(lifeExpectancy),!is.na(region), !is.na(name), !is.na(time)) %>% 
+    filter(time == '2019') %>% 
+    group_by(region, time) %>% 
+    summarize(
+      total_le = mean(lifeExpectancy)
+    ) 
+  
+  average_le_1960 <- gapminder %>% 
+    filter(!is.na(lifeExpectancy),!is.na(region), !is.na(name), !is.na(time)) %>% 
+    filter(time == '1960') %>% 
+    group_by(region, time) %>% 
+    summarize(
+      total = mean(lifeExpectancy)
+    ) 
+
+```
+
+These results fit what I said about the figures. Between 1960 and 2019, Asia grew in life extectancy and went from being the second lowest in life expectancy to the third lowest. It also experienced more growth in this period than Europe did despite Europe having the highest life expectancy in both years,
+
 5. (8pt) Compute the average LE growth from 1960-2019 across the continents. Show the results in the order of growth. Explain what do you see.
 Hint: these data (data in long form) is not the simplest to compute growth. But you may
 want to check out the lag() function. And do not forget to group data by continent when
 using lag(), otherwise your results will be messed up! See https://faculty.washington.
 edu/otoomet/info201-book/dplyr.html#dplyr-helpers-compute.
+
+
+```{r message=FALSE}
+ average_growth <- gapminder %>% 
+    filter(!is.na(lifeExpectancy),!is.na(region), !is.na(name), !is.na(time)) %>% 
+    filter(time == '1960'| time == '2019') %>% 
+    group_by(region, time) %>% 
+    summarize(
+      le_average = mean(lifeExpectancy)
+    )  %>% 
+    mutate(previous_year = lag(le_average), growth = le_average - previous_year) %>% 
+    filter(!is.na(growth)) %>% 
+    arrange(-growth) %>% 
+    knitr::kable() 
+
+average_growth
+```
+
+I see that as expected based off previous graphs, Asia has the most growth out of the continents. Surprisingly, Africa has the second-most growth. I believe that's because although it is still at the lowest life expectancy, it did grow a lot from where it was in 1960 to 2019. It just didn't grow enough to surpass other continents' average life expectancy.
+
 
 6. (6pt) Show the histogram of GDP per capita for years of 1960 and 2019. Try to put both
 histograms on the same graph, see how well you can do it!
@@ -335,5 +420,5 @@ histograms on the same graph, see how well you can do it!
   
 8. (6pt) If you did this correctly, then you noticed that US ranking has been falling quite a bit. But we also have more countries in 2019–what about the relative rank divided by the corresponding number of countries that have LE data in the corresponding year? Hint: 0.0904 for 1960.
 
-## Finally tell us how many hours did you spend on this PS.
+9. Finally tell us how many hours did you spend on this PS.
 

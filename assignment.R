@@ -230,10 +230,6 @@ missing_co2_PC <- gapminder %>%
   three_lowest <- three %>% 
     group_by(region) %>% 
     filter(rank(desc(-total)) < 4)
-    
-
-    
-  
 
 ##4 GDP per capita (50pt)
 
@@ -242,22 +238,100 @@ missing_co2_PC <- gapminder %>%
   ##1960. Make the point size dependent on the country size, and color those according to the
   ##continent. Feel free to adjust the plot in other ways to make it better.
   ##Comment what do you see there.
-##2. (4pt) Make a similar plot, but this time use 2019 data only.
+  gdp <- gapminder %>% 
+    filter(!is.na(name), !is.na(region), !is.na(GDP_PC), !is.na(time), 
+           !is.na(lifeExpectancy), !is.na(totalPopulation)) %>% 
+    filter(time == '1960') %>% 
+    group_by(name, region, lifeExpectancy, GDP_PC, totalPopulation) %>% 
+    select(name, region, time, lifeExpectancy, GDP_PC, totalPopulation)
+  
+  ggplot(gdp,
+         aes(GDP_PC, lifeExpectancy, col=region)) +
+    geom_point(aes(size=totalPopulation)) +
+    labs( x = 'GDP per capita',
+          y = 'Life Expectancy') +
+    ggtitle('GDP per capita versus life expectancy by country in 1960')
 
+##2. (4pt) Make a similar plot, but this time use 2019 data only.
+  gdp2 <- gapminder %>% 
+    filter(!is.na(name), !is.na(region), !is.na(GDP_PC), !is.na(time), 
+           !is.na(lifeExpectancy), !is.na(totalPopulation)) %>% 
+    filter(time == '2019') %>% 
+    group_by(name, region, lifeExpectancy, GDP_PC, totalPopulation) %>% 
+    select(name, region, time, lifeExpectancy, GDP_PC, totalPopulation)
+  
+  ggplot(gdp2,
+         aes(GDP_PC, lifeExpectancy, col=region)) +
+    geom_point(aes(size=totalPopulation)) +
+    labs( x = 'GDP per capita',
+          y = 'Life Expectancy') +
+    ggtitle('GDP per capita versus life expectancy by country in 2019')
+  
 ##3. (6pt) Compare these two plots and comment what do you see. How has world developed
   ##through the last 60 years?
+#~~~DONE
+  
 ##4. (6pt) Compute the average life expectancy for each continent in 1960 and 2019. Do the results
   ##fit with what do you see on the figures?
   ##Note: here as average I mean just average over countries, ignore the fact that countries are of
   ##different size.
+  average_le_2019 <- gapminder %>% 
+    filter(!is.na(lifeExpectancy),!is.na(region), !is.na(name), !is.na(time)) %>% 
+    filter(time == '2019') %>% 
+    group_by(region, time) %>% 
+    summarize(
+      total_le = mean(lifeExpectancy)
+    ) 
+  
+  average_le_1960 <- gapminder %>% 
+    filter(!is.na(lifeExpectancy),!is.na(region), !is.na(name), !is.na(time)) %>% 
+    filter(time == '1960') %>% 
+    group_by(region, time) %>% 
+    summarize(
+      total = mean(lifeExpectancy)
+    ) 
+  
 ##5. (8pt) Compute the average LE growth from 1960-2019 across the continents. Show the results
   ##in the order of growth. Explain what do you see.
   ##Hint: these data (data in long form) is not the simplest to compute growth. But you may
   ##want to check out the lag() function. And do not forget to group data by continent when
   ##using lag(), otherwise your results will be messed up! See https://faculty.washington.
   ##edu/otoomet/info201-book/dplyr.html#dplyr-helpers-compute.
+  average_growth <- gapminder %>% 
+    filter(!is.na(lifeExpectancy),!is.na(region), !is.na(name), !is.na(time)) %>% 
+    filter(time == '1960'| time == '2019') %>% 
+    group_by(region, time) %>% 
+    summarize(
+      le_average = mean(lifeExpectancy)
+    )  %>% 
+    mutate(previous_year = lag(le_average), growth = le_average - previous_year) %>% 
+    filter(!is.na(growth)) %>% 
+    arrange(-growth)
+    
+  
+  
+  
 ##6. (6pt) Show the histogram of GDP per capita for years of 1960 and 2019. Try to put both
 ##histograms on the same graph, see how well you can do it!
+  history <- gapminder %>% 
+    filter(!is.na(time), !is.na(GDP_PC)) %>% 
+    filter(time == '1960' | time == '2019') %>% 
+    group_by(time, GDP_PC) %>% 
+    summarize(
+      GDP_capita = sum(GDP_PC)
+    ) 
+  
+  ggplot(average, aes(region, avg_co2_PC, fill = factor(time))) +
+    geom_bar(stat = 'identity', position = 'dodge')
+  
+  ggplot(history) +
+    geom_histogram(aes(GDP_PC, time))
+    geom_bar( position = 'dodge')
+    
+  
+  
+  
+  
 ##7. (6pt) What was the ranking of US in terms of life expectancy in 1960 and in 2019? (When
 ##counting from top.)
   ##Hint: check out the function rank()!
