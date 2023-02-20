@@ -9,43 +9,6 @@ output: html_document
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
-## Including Plots
-
-You can also embed plots, for example:
-
-```{r pressure, echo=FALSE}
-plot(pressure)
-```
-
-## Gapminder data
-We use gapminder dataset, downloaded from https://www.gapminder.org/data/, however, the data structure there is quire complex, please use the dataset provided on canvas (in files/data).
-The variables are:
-_name_: country name
-_iso3_: 3-letter country code
-_iso2_: 2-letter country code
-_region_: broad geographic region
-_sub-region_: more precise region
-_intermediate-region_
-_time_: year
-_totalPopulation_: total population
-_GDP_PC_: GDP per capita (constant 2010 US$)
-_accessElectricity_: Access to electricity (% of population)
-_agriculturalLand_: Agricultural land (sq. km)
-_agricultureTractors_: Agricultural machinery, tractors (count)
-_cerealProduction_: Cereal production (metric tons)
-_feritilizerHa_: Fertilizer consumption (kilograms per hectare of arable land)
-_fertilityRate_: total fertility rate (births per woman)
-_lifeExpectancy_: Life expectancy at birth, total (years)
-_childMortality_: Mortality rate, under-5 (per 1,000 live births)
-_youthFemaleLiteracy_: Literacy rate, youth female (% of females ages 15-24)
-_youthMaleLiteracy_: Literacy rate, youth male (% of males ages 15-24)
-_adultLiteracy_: Literacy rate, adult total (% of people ages 15 and above)
-_co2_: CO2 emissions (kt)
-_greenhouseGases_: Total greenhouse gas emissions (kt of CO2 equivalent)
-_co2_PC_: CO2 emissions (metric tons per capita)
-_*'pm2.5_35'*_: PM2.5 pollution, population exposed to levels exceeding WHO Interim Target-1 value 36ug/m3 (
-_battleDeaths_: Battle-related deaths (number of people)
-
 ```{r, echo=FALSE, message=FALSE}
 library(tidyverse)
 library(dplyr)
@@ -63,7 +26,7 @@ r-markdown.htmlr-markdown-rstudio-creating.
 gapminder <- read_delim('/Users/nawald/Desktop/gapminder.csv.bz2')
 ```
 
-```{r, echo=FALSE}
+```{r, message=FALSE}
 row <- nrow(gapminder)
 column <- ncol(gapminder)
 ```
@@ -71,7 +34,7 @@ We have `r row` rows and `r column` columns in the data
 
 
 3. (2pt) Print a small sample of data. Does it look OK?
-```{r, echo=FALSE}
+```{r, message=FALSE}
 gapminder %>% 
 sample_n(3) %>% 
   knitr::kable()
@@ -81,7 +44,7 @@ The data looks OK.
 ## 2 Descriptive statistics (15pt)
 1. (3pt) How many countries are there in the dataset? Analyze all three: iso3, iso2 and name.
 
-```{r}
+```{r, message=FALSE}
 countries_iso3 <- gapminder %>% 
   select(iso3) %>% 
   filter(!is.na(iso3)) %>% 
@@ -104,7 +67,7 @@ There are `r countries_iso3` countries according to the iso3 variable, `r countr
 2. If you did this correctly, you saw that there are more names than iso-2 codes, and there are even more iso3 -codes. What is going on? Can you find it out?
   (a) (5pt) Find how many names are there for each iso-2 code. Are there any iso-2 codes that correspond to more than one name? What are these countries?
 
-```{r, echo=FALSE} 
+```{r, message=FALSE} 
 find_out <- gapminder %>% 
   group_by(iso2) %>% 
   summarize(total = n_distinct(name)) %>% 
@@ -122,7 +85,7 @@ Yes, there is an iso-2 code that corresponds to more than one name, this code is
   (b) (5pt) Now repeat the same for name and iso3-code. Are there country names that have more than one iso3-code? What are these countries?
 Hint: two of these entitites are CHANISL and NLD CURACAO.
 
-``` {r}
+``` {r, message=FALSE}
 thing <- gapminder %>% 
   group_by(name) %>% 
   summarize(total = n_distinct(iso3)) %>% 
@@ -138,7 +101,7 @@ Yes, there are country names that have more than one iso3-code. The country name
 
 3. (2pt) What is the minimum and maximum year in these data?
 
-```{r}
+```{r, message=FALSE}
 numbers <- gapminder %>% 
   filter(!is.na(time)) 
   
@@ -155,7 +118,7 @@ Next, let’s analyze CO2 emissions.
 1. (2pt) How many missing co2 emissions are there for each year? Analyze both missing CO2
 and co2_PC. Which years have most missing data?
 
-```{r, echo=FALSE}
+```{r, message=FALSE}
  missing_co2 <- gapminder %>% 
   filter(is.na(co2)) %>% 
   filter(!is.na(time)) %>% 
@@ -172,7 +135,7 @@ These are the missing co2 emissions for each year, using the co2 column to calcu
 The years with the most missing data here are 2019, 2018 and 2017. 
 
 
-``` {r, echo=FALSE}
+``` {r, message=FALSE}
 missing_co2_PC <- gapminder %>% 
   filter(is.na(co2_PC)) %>% 
   filter(!is.na(time)) %>% 
@@ -194,7 +157,7 @@ Once again, the years with the most missing data are 2019, 2018 and 2017.
 
 
 
-```{r, echo=FALSE, message=FALSE}
+```{r, message=FALSE}
 emissions <- gapminder %>% 
       group_by(name, time) %>% 
       filter(!is.na(co2)) %>% 
@@ -217,7 +180,7 @@ I see that Afghanistan and Aruba have a significantly less amount of total co2 e
 3. (5pt) Now let’s analyze the CO2 emissions per capita (co2_PC ). Make a similar plot of the same countries. What does this figure suggest?
 
 
-```{r, echo=FALSE, message=FALSE}
+```{r, message=FALSE}
 capita <- gapminder %>% 
       group_by(name, time) %>% 
       filter(!is.na(co2_PC)) %>% 
@@ -243,7 +206,7 @@ Note: just compute averages over countries and ignore the fact that countries ar
 
 Hint: Americas 2016 should be 4.80.
 
-```{r, echo=FALSE, message=FALSE} 
+```{r, message=FALSE} 
 average <- gapminder %>% 
       filter(!is.na(co2_PC),!is.na(region)) %>% 
       group_by(region, time) %>% 
@@ -258,7 +221,7 @@ I noticed that with a few exceptions, Americas have the highest average co2 emis
 
 
 5. (7pt) Make a barplot where you show the previous results–average CO2 emissions per capita across continents in 1960 and 2016.
-```{r, echo=FALSE}
+```{r, message=FALSE}
 average <- gapminder %>% 
       filter(!is.na(co2_PC),!is.na(region)) %>% 
       filter(time == '1960'| time == '2016') %>% 
@@ -274,7 +237,7 @@ average <- gapminder %>%
 
 6. Which countries are the three largest, and three smallest CO2 emitters (in terms of CO2 per capita) in 2019 for each continent? (Assume region is continent).
 
-``` {r, echo=FALSE, message=FALSE}
+``` {r, message=FALSE}
 three <-  gapminder %>% 
   select(name, region, time, co2_PC) %>% 
   filter(!is.na(co2_PC), !is.na(name), !is.na(region), !is.na(time)) %>% 
@@ -414,11 +377,67 @@ I see that as expected based off previous graphs, Asia has the most growth out o
 6. (6pt) Show the histogram of GDP per capita for years of 1960 and 2019. Try to put both
 histograms on the same graph, see how well you can do it!
 
+```{r, message=FALSE}
+history <- gapminder %>% 
+    filter(!is.na(time), !is.na(GDP_PC)) %>% 
+    filter(time == '1960'| time == '2019') %>% 
+    group_by(time, GDP_PC) %>% 
+    summarize(
+      GDP_capita = sum(GDP_PC)
+    ) 
+  
+  ggplot(history, aes(x = GDP_PC)) +
+    geom_histogram(color = 'purple', alpha=0.5, position = 'identity') +
+    facet_wrap(~time)
+```
+
+
 7. (6pt) What was the ranking of US in terms of life expectancy in 1960 and in 2019? (When counting from top.)
   Hint: check out the function rank()!
   Hint2: 17 for 1960.
+```{r, message=FALSE}
+rank_1960 <- gapminder %>% 
+    filter(!is.na(time), !is.na(name), !is.na(lifeExpectancy)) %>% 
+    filter(time == '1960') %>% 
+    group_by(time, name, lifeExpectancy) %>% 
+    arrange(-lifeExpectancy)
+  
+  rank_2019 <- gapminder %>% 
+    filter(!is.na(time), !is.na(name), !is.na(lifeExpectancy)) %>% 
+    filter(time == '2019') %>% 
+    group_by(time, name, lifeExpectancy) %>% 
+    arrange(-lifeExpectancy)
+
+```
+  
+The US ranked 17th in terms of life expectancy in 1960, and 46th in 2019.
+  
   
 8. (6pt) If you did this correctly, then you noticed that US ranking has been falling quite a bit. But we also have more countries in 2019–what about the relative rank divided by the corresponding number of countries that have LE data in the corresponding year? Hint: 0.0904 for 1960.
 
+```{r, message=FALSE}
+total_countries <- length(rank_1960$name)
+  
+  filler <- rank_1960 %>% 
+    mutate(ranking = rank(desc(lifeExpectancy)),
+           ranked = ranking/total_countries) %>% 
+    select(name, ranking, ranked) %>% 
+    filter(name == 'United States of America')
+  
+  filler
+  
+  filler2 <- rank_2019 %>% 
+    mutate(ranking = rank(desc(lifeExpectancy)),
+           ranked = ranking/total_countries) %>% 
+    select(name, ranking, ranked) %>% 
+    filter(name == 'United States of America')
+
+  
+  filler2
+```
+
+
+
 9. Finally tell us how many hours did you spend on this PS.
 
+I spent 13 hours.

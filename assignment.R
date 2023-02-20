@@ -307,38 +307,57 @@ missing_co2_PC <- gapminder %>%
     mutate(previous_year = lag(le_average), growth = le_average - previous_year) %>% 
     filter(!is.na(growth)) %>% 
     arrange(-growth)
-    
-  
-  
-  
+
 ##6. (6pt) Show the histogram of GDP per capita for years of 1960 and 2019. Try to put both
 ##histograms on the same graph, see how well you can do it!
   history <- gapminder %>% 
     filter(!is.na(time), !is.na(GDP_PC)) %>% 
-    filter(time == '1960' | time == '2019') %>% 
+    filter(time == '1960'| time == '2019') %>% 
     group_by(time, GDP_PC) %>% 
     summarize(
       GDP_capita = sum(GDP_PC)
     ) 
   
-  ggplot(average, aes(region, avg_co2_PC, fill = factor(time))) +
-    geom_bar(stat = 'identity', position = 'dodge')
-  
-  ggplot(history) +
-    geom_histogram(aes(GDP_PC, time))
-    geom_bar( position = 'dodge')
-    
-  
-  
-  
-  
+  ggplot(history, aes(x = GDP_PC)) +
+    geom_histogram(color = 'purple', alpha=0.5, position = 'identity') +
+    facet_wrap(~time)
+
 ##7. (6pt) What was the ranking of US in terms of life expectancy in 1960 and in 2019? (When
 ##counting from top.)
   ##Hint: check out the function rank()!
   ##Hint2: 17 for 1960.
+  
+  rank_1960 <- gapminder %>% 
+    filter(!is.na(time), !is.na(name), !is.na(lifeExpectancy)) %>% 
+    filter(time == '1960') %>% 
+    group_by(time, name, lifeExpectancy) %>% 
+    arrange(-lifeExpectancy)
+  
+  rank_2019 <- gapminder %>% 
+    filter(!is.na(time), !is.na(name), !is.na(lifeExpectancy)) %>% 
+    filter(time == '2019') %>% 
+    group_by(time, name, lifeExpectancy) %>% 
+    arrange(-lifeExpectancy)
+
+  #1960: Rank 17th highest
+  #2019: Rank 46th Highest
+  
 ##8. (6pt) If you did this correctly, then you noticed that US ranking has been falling quite a
   ##bit. But we also have more countries in 2019–what about the relative rank divided by the
   ##corresponding number of countries that have LE data in the corresponding year?
   ##Hint: 0.0904 for 1960.
+ 
+  total_countries <- length(rank_1960$name)
+  
+  filler <- rank_1960 %>% 
+    mutate(ranking = rank(desc(lifeExpectancy)),
+           ranked = ranking/total_countries) %>% 
+    select(name, ranking, ranked) %>% 
+    filter(name == 'United States of America')
+  
+  
+
+  
+  
 
 ##Finally tell us how many hours did you spend on this PS.
